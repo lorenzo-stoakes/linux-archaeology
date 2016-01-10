@@ -1,0 +1,33 @@
+diff --git a/arch/x86_64/kernel/process.c b/arch/x86_64/kernel/process.c
+index 560e288..59fdb08 100644
+--- a/arch/x86_64/kernel/process.c
++++ b/arch/x86_64/kernel/process.c
+@@ -480,10 +480,10 @@ int copy_thread(int nr, unsigned long clone_flags, unsigned long rsp,
+ 	p->thread.fs = me->thread.fs;
+ 	p->thread.gs = me->thread.gs;
+ 
+-	asm("movl %%gs,%0" : "=m" (p->thread.gsindex));
+-	asm("movl %%fs,%0" : "=m" (p->thread.fsindex));
+-	asm("movl %%es,%0" : "=m" (p->thread.es));
+-	asm("movl %%ds,%0" : "=m" (p->thread.ds));
++	asm("movw %%gs,%0" : "=m" (p->thread.gsindex));
++	asm("movw %%fs,%0" : "=m" (p->thread.fsindex));
++	asm("movw %%es,%0" : "=m" (p->thread.es));
++	asm("movw %%ds,%0" : "=m" (p->thread.ds));
+ 
+ 	unlazy_fpu(current);	
+ 	p->thread.i387 = current->thread.i387;
+@@ -528,11 +528,11 @@ struct task_struct *__switch_to(struct task_struct *prev_p, struct task_struct *
+ 	/* 
+ 	 * Switch DS and ES.	 
+ 	 */
+-	asm volatile("movl %%es,%0" : "=m" (prev->es)); 
++	asm volatile("movw %%es,%0" : "=m" (prev->es)); 
+ 	if (unlikely(next->es | prev->es))
+ 		loadsegment(es, next->es); 
+ 	
+-	asm volatile ("movl %%ds,%0" : "=m" (prev->ds)); 
++	asm volatile ("movw %%ds,%0" : "=m" (prev->ds)); 
+ 	if (unlikely(next->ds | prev->ds))
+ 		loadsegment(ds, next->ds);
+ 
