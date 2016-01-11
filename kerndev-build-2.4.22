@@ -98,6 +98,9 @@ function build_kernel()
 }
 
 push $target_dir
+# Copy .gitignore for convenience. We don't want to commit as we want to keep
+# commits synced with the kernel, not contaminate the history.
+cp $script_dir/kernel_gitignore .gitignore
 
 check_kernel_dir
 check_config
