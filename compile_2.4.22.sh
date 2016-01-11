@@ -71,7 +71,11 @@ function apply_patches()
 
 function revert_patches()
 {
+	push $target_dir
+
 	apply_patches --reverse
+
+	pop
 }
 
 function mak()
