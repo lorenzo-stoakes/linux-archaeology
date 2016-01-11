@@ -79,7 +79,7 @@ function build()
 	jobs=$((cores+1))
 
 	opts="--jobs=$jobs "
-	if [ ! -z "$compiler_version" ]; then
+	if [ -n "$compiler_version" ]; then
 		compiler_path="/opt/gcc-$compiler_version/bin/gcc-$compiler_version"
 
 		opts+="CC=$compiler_path"
