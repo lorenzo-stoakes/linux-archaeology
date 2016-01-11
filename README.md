@@ -18,7 +18,7 @@ __NOTE:__ These steps may work on other version of the kernel also however
 
 2. Run `make menuconfig` and set up the kernel as you require.
 
-3. Run `compile_2.4.22.sh` either from the kernel directory or if elsewhere,
+3. Run `kerndev-build-2.4.22` either from the kernel directory or if elsewhere,
    specify the kernel directory as the first parameter. The script will
    automatically obtain and install GCC versions 3.2.3 and 3.4.6 (3.2.3 is what
    we need for the kernel, 3.4.6 is needed to compile 3.2.3.) - the compilers
