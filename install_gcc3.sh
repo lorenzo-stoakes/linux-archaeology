@@ -39,7 +39,7 @@ function get_check()
 	# More recent gcc's have gpg signatures, skipping checking that for now.
 	wget --quiet $md5url && check_md5 $filename || echo "...missing md5sum, skipping."
 
-	[ "$expected" != "$actual" ] && fatal "md5sum mismatch: $actual != $expected" || true
+	[[ "$expected" != "$actual" ]] && fatal "md5sum mismatch: $actual != $expected" || true
 
 	tar xf $filename
 	rm $filename
@@ -79,7 +79,7 @@ function build()
 	jobs=$((cores+1))
 
 	opts="--jobs=$jobs "
-	if [ -n "$compiler_version" ]; then
+	if [[ -n "$compiler_version" ]]; then
 		compiler_path="/opt/gcc-$compiler_version/bin/gcc-$compiler_version"
 
 		opts+="CC=$compiler_path"

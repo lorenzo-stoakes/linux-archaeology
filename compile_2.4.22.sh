@@ -27,12 +27,12 @@ function fatal()
 
 function check_kernel_dir()
 {
-	[ ! -f REPORTING-BUGS ] && fatal "$PWD doesn't look like a kernel tree." || true
+	[[ ! -f REPORTING-BUGS ]] && fatal "$PWD doesn't look like a kernel tree." || true
 }
 
 function check_config()
 {
-	[ ! -f .config ] && fatal "Missing .config - run make menuconfig first." || true
+	[[ ! -f .config ]] && fatal "Missing .config - run make menuconfig first." || true
 }
 
 function install_gcc3()
@@ -47,7 +47,7 @@ function check_gcc_or_install()
 {
 	version=$1
 
-	[ ! -d /opt/gcc-$version/bin ] && install_gcc3 $version || true
+	[[ ! -d /opt/gcc-$version/bin ]] && install_gcc3 $version || true
 }
 
 function apply_patch()
