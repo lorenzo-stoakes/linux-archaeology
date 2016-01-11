@@ -40,7 +40,7 @@ function install_gcc3()
 	version=$1
 
 	echo "gcc $version missing, installing..."
-	$script_dir/install_gcc3.sh
+	$script_dir/kerndev-install-gcc3
 }
 
 function check_gcc_or_install()
