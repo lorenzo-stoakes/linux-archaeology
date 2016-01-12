@@ -5,7 +5,7 @@ target_dir=${1:-$PWD}
 # See http://stackoverflow.com/a/4774063.
 script_dir=$(cd $(dirname $0); pwd -P)
 # Various fixes required to make the kernel compile.
-patches="mov_size_fix acpi_function_args_fix build_tool_fix"
+patches="mov_size_fix acpi_function_args_fix build_tool_fix debug_symbols"
 # This path will be available once install_gcc3.sh has completed.
 gcc_path=/opt/gcc-3.2.3/bin/gcc-3.2.3
 
