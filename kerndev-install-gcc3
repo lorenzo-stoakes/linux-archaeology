@@ -129,3 +129,4 @@ go 3.4.6
 go 3.2.3 3.4.6
 
 pop
+rm -rf "$tmpdir"
