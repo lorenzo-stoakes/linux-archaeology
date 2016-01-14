@@ -8,9 +8,6 @@ with these scripts in order to get hold of a specific old version of linux.
 
 ## 2.4.22
 
-__Under construction:__ - I've not yet got the image to work under qemu, so
-there may still be bugs present in this process (though I have got it to build.)
-
 __NOTE:__ These steps may work on other version of the kernel also however
 [2.4.22][linux-2.4.22] is the only one I've tried them against.
 
