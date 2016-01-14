@@ -1,0 +1,76 @@
+#!/bin/bash
+set -e; set -o pipefail
+
+# See http://stackoverflow.com/a/4774063.
+script_dir=$(cd $(dirname $0); pwd -P)
+source $script_dir/kerndev-shared.sh
+
+check_commands dd losetup parted mkfs.ext3 extlinux busybox mknod chroot sudo git mktemp
+
+linux_dir=${1:-$PWD}
+check_kernel_dir "$linux_dir"
+bzImage_path="$linux_dir/$bzImage_rel_path"
+configs_dir="$script_dir/configs"
+
+[ -f "$bzImage_path" ] || fatal "Missing image at '$bzImage_path'."
+[ -f "$mbr_path" ] || fatal "Missing MBR at $mbr_path, try installing the 'syslinux' package."
+
+elevate $@
+
+echo Creating image file...
+
+mkdir -p "$images_dir"
+rm -f "$image_path"
+dd if=/dev/zero of="$image_path" bs=1M count=$image_size_mb 2>/dev/null
+
+do_parted mklabel msdos
+do_parted -a optimal mkpart primary ext3 '0%' '100%'
+do_parted set 1 boot on
+
+check_reload_loop
+
+echo Mounting and formatting image...
+
+loopdev=$(mount_image_loop)
+partdev=${loopdev}p1
+trap "unmount_image $loopdev" EXIT
+
+# Use inode size 128, as otherwise mkfs (reasonably :) assumes we have kernel
+# >2.6.10, and sets the inodes higher, which breaks for our poor 2.4.22 kernel.
+mkfs.ext3 -qF -I 128 $partdev
+mount_looped_image $partdev
+
+echo Creating rootfs and installing extlinux boot code and kernel...
+extlinux --install $mount_dir 2>/dev/null
+cp "$configs_dir/syslinux.cfg" "$bzImage_path" "$mount_dir"
+
+push "$mount_dir"
+
+mkdir -p dev proc bin usr lib etc/init.d
+ln -sr bin usr/bin
+ln -sr lib usr/lib
+touch etc/fstab
+cp "$configs_dir"/rcS etc/init.d
+
+echo Installing busybox binaries...
+
+cp $(which busybox) bin
+chroot . /bin/busybox --install /bin
+
+echo Creating basic devices...
+cd dev
+mknod console c 5 1
+mknod zero c 1 5
+mknod null c 1 3
+for n in $(seq 0 5); do
+	mknod tty$n c 4 $n
+done
+
+pop
+
+unmount_image $loopdev
+
+echo Installing MBR...
+dd bs=440 count=1 conv=notrunc if="$mbr_path" of="$image_path" 2>/dev/null
+
+echo Done!
