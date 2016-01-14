@@ -70,11 +70,16 @@ function check_reload_loop()
 	fi
 }
 
+function say_image_loop()
+{
+	losetup --associated $image_path | awk '{print $1}' | tr --delete ':'
+}
+
 function mount_image_loop()
 {
 	losetup --find $image_path 2>/dev/null
 	# Output mounted loop device partition.
-	losetup --associated $image_path | awk '{print $1}' | tr --delete ':'
+	say_image_loop
 }
 
 function mount_looped_image()
