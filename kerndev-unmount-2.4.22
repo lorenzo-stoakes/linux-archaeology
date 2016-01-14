@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e; set -o pipefail
+
+# See http://stackoverflow.com/a/4774063.
+script_dir=$(cd $(dirname $0); pwd -P)
+source $script_dir/kerndev-shared.sh
+
+[ -f "$image_path" ] || fatal "Missing image at '$image_path'."
+
+elevate $@
+
+loopdev=$(say_image_loop)
+unmount_image $loopdev
