@@ -1,34 +1,15 @@
 #!/bin/bash
 set -e; set -o pipefail
 
-target_dir=${1:-$PWD}
 # See http://stackoverflow.com/a/4774063.
 script_dir=$(cd $(dirname $0); pwd -P)
+source $script_dir/kerndev-shared.sh
+
+target_dir=${1:-$PWD}
 # Various fixes required to make the kernel compile.
 patches="mov_size_fix acpi_function_args_fix build_tool_fix debug_symbols"
 # This path will be available once install_gcc3.sh has completed.
 gcc_path=/opt/gcc-3.2.3/bin/gcc-3.2.3
-
-function push()
-{
-	pushd $1 >/dev/null
-}
-
-function pop()
-{
-	popd >/dev/null
-}
-
-function fatal()
-{
-	echo $@ >&2
-	exit 1
-}
-
-function check_kernel_dir()
-{
-	[[ ! -f REPORTING-BUGS ]] && fatal "$PWD doesn't look like a kernel tree." || true
-}
 
 function check_config()
 {
@@ -97,12 +78,13 @@ function build_kernel()
 	mak bzImage
 }
 
+check_kernel_dir $target_dir
+
 push $target_dir
 # Copy .gitignore for convenience. We don't want to commit as we want to keep
 # commits synced with the kernel, not contaminate the history.
 cp $script_dir/kernel_gitignore .gitignore
 
-check_kernel_dir
 check_config
 check_gcc_or_install 3.2.3
 

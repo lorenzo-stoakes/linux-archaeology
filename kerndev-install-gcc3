@@ -1,21 +1,9 @@
 #!/bin/bash
 set -e; set -o pipefail
 
-function push()
-{
-	pushd $1 >/dev/null
-}
-
-function pop()
-{
-	popd >/dev/null
-}
-
-function fatal()
-{
-	echo $@ >&2
-	exit 1
-}
+# See http://stackoverflow.com/a/4774063.
+script_dir=$(cd $(dirname $0); pwd -P)
+source $script_dir/kerndev-shared.sh
 
 function check_md5()
 {
@@ -130,7 +118,9 @@ tmpdir=$(mktemp --directory)
 scriptdir=$(cd $(dirname $0); pwd -P)
 
 push $scriptdir/patches
+
 cp siginfo_3.2.3.diff siginfo_3.4.6.diff $tmpdir
+
 pop
 
 push $tmpdir
@@ -138,4 +128,4 @@ push $tmpdir
 go 3.4.6
 go 3.2.3 3.4.6
 
-popd
+pop
