@@ -38,12 +38,8 @@ function unmount_image()
 {
 	loopdev=$1
 
-	push $images_dir
-
-	umount disk 2>/dev/null || true
+	umount $mount_dir 2>/dev/null || true
 	losetup --detach $loopdev 2>/dev/null || true
-
-	pop
 }
 
 # Replaces the current script with an elevated version of itself.
