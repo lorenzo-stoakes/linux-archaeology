@@ -108,3 +108,13 @@ function do_parted()
 {
 	parted --script $image_path $@ 2>/dev/null
 }
+
+function reverse_list()
+{
+	rev_chr=$(echo "$@" | rev)
+
+	for word in $rev_chr; do
+		    printf "%s " "$(echo $word | rev)"
+	done
+	printf "\n"
+}

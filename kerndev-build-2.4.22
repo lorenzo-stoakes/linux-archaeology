@@ -44,7 +44,12 @@ function apply_patches()
 	extra_opts=$1
 	patch_dir=$script_dir/patches
 
-	for patch in $patches; do
+	# TODO: Ugly to specifically check for this, do this better.
+	[[ "$extra_opts" = "--reverse" ]] && \
+		cand_patches=$(reverse_list $patches) || \
+		cand_patches=$patches
+
+	for patch in $cand_patches; do
 		path=$patch_dir/$patch.diff
 		apply_patch $path $extra_opts
 	done
