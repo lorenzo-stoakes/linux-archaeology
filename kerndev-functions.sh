@@ -8,7 +8,7 @@ function push()
 
 function pop()
 {
-	popd >/dev/null
+	popd &>/dev/null || true
 }
 
 function error()
@@ -34,12 +34,20 @@ function load_loop()
 	modprobe loop max_part=15
 }
 
+# TODO This is _too_ silent. Report errors when appropriate.
 function unmount_image()
 {
 	loopdev=$1
 
+	# Make sure we aren't in the mounted directory, otherwise unmount will
+	# fail.
+	[[ "$PWD" = "$(realpath $mount_dir)" ]] && pop || true
+
+	sync
 	umount $mount_dir 2>/dev/null || true
 	losetup --detach $loopdev 2>/dev/null || true
+
+
 }
 
 # Replaces the current script with an elevated version of itself.
