@@ -137,3 +137,5 @@ lib/gen_crc32table
 scripts/lxdialog/lxdialog
 scripts/mkdep
 scripts/split-include
+
+include/linux/modules/
