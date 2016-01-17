@@ -74,7 +74,7 @@ push $tmpdir
 
 git clone --quiet --depth=1 git://git.musl-libc.org/musl .
 ./configure --prefix="$mount_dir/usr/local/musl" \
-	    --syslibdir="$mount_dir/lib" >/dev/null
+	    --syslibdir="$mount_dir/lib" --target=$arch >/dev/null
 
 # TODO: De-duplicate this from kerndev-build-2.4.22.
 # Ref: http://stackoverflow.com/a/6481016
@@ -82,11 +82,11 @@ cores=$(grep -c ^processor /proc/cpuinfo)
 # A good jobs value is cores+1.
 jobs=$((cores+1))
 
-make --jobs=$jobs &>/dev/null
+make $musl_flags --jobs=$jobs &>/dev/null
 make install &>/dev/null
 
 # Fix up dynamic linker symlink.
-ln -sf /usr/local/musl/lib/libc.so $mount_dir/lib/ld-musl-x86_64.so.1
+ln -sf /usr/local/musl/lib/libc.so $mount_dir/lib/ld-musl-$arch.so.1
 
 pop
 rm -rf "$tmpdir"
