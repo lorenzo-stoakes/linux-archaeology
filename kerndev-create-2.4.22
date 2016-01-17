@@ -52,7 +52,6 @@ ln -sr lib usr/lib
 touch etc/fstab
 cp "$configs_dir"/rcS etc/init.d
 
-busybox_arch=x86_64
 echo Downloading and installing busybox...
 wget --quiet --output-document=bin/busybox \
      https://busybox.net/downloads/binaries/latest/busybox-$busybox_arch
