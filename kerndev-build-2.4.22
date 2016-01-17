@@ -72,7 +72,7 @@ function mak()
 	# A good jobs value is cores+1.
 	jobs=$((cores+1))
 
-	make CC=$gcc_path --jobs=$jobs $@ >/dev/null
+	make --jobs=$jobs CC=$gcc_path ARCH=$arch $@ >/dev/null
 }
 
 function build_kernel()
