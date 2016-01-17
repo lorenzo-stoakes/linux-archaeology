@@ -1,9 +1,13 @@
 diff --git a/Makefile b/Makefile
-index 231ecd0..ad61618 100644
+index 231ecd0..9a25c3b 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -92,7 +92,7 @@ export MODLIB
- CPPFLAGS := -D__KERNEL__ -I$(HPATH)
+@@ -89,10 +89,10 @@ export MODLIB
+ # standard CFLAGS
+ #
+ 
+-CPPFLAGS := -D__KERNEL__ -I$(HPATH)
++CPPFLAGS := -D__KERNEL__ -I$(HPATH) -g
  
  CFLAGS := $(CPPFLAGS) -Wall -Wstrict-prototypes -Wno-trigraphs -O2 \
 -	  -fno-strict-aliasing -fno-common
