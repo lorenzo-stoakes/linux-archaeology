@@ -26,3 +26,4 @@ export mbr_path=/usr/lib/syslinux/bios/mbr.bin
 export image_size_mb=2048
 export qemu_mem=4G
 export bzImage_rel_path=arch/$arch/boot/bzImage
+export default_linux_dir=$HOME/linux-historical

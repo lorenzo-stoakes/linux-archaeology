@@ -7,7 +7,7 @@ source $script_dir/kerndev-shared.sh
 
 check_commands dd losetup parted mkfs.ext3 extlinux mknod chroot sudo git mktemp
 
-linux_dir=${1:-$PWD}
+linux_dir=${1:-$default_linux_dir}
 check_kernel_dir "$linux_dir"
 bzImage_path="$linux_dir/$bzImage_rel_path"
 configs_dir="$script_dir/configs"

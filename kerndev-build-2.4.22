@@ -5,7 +5,7 @@ set -e; set -o pipefail
 script_dir=$(cd $(dirname $0); pwd -P)
 source $script_dir/kerndev-shared.sh
 
-target_dir=${1:-$PWD}
+target_dir=${1:-$default_linux_dir}
 # Various fixes required to make the kernel compile.
 patches="mov_size_fix acpi_function_args_fix build_tool_fix debug_symbols"
 patches+=" $arch_patches"
