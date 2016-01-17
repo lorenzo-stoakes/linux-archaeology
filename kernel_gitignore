@@ -105,14 +105,14 @@ all.config
 # Kdevelop4
 *.kdev4
 
-arch/x86_64/boot/bbootsect
-arch/x86_64/boot/bsetup
-arch/x86_64/boot/bzImage
-arch/x86_64/boot/compressed/bvmlinux*
-arch/x86_64/boot/tools/build
-arch/x86_64/kernel/process.c.rej
-arch/x86_64/tools/offset.h
-arch/x86_64/tools/offset.tmp
+arch/*/boot/bbootsect
+arch/*/boot/bsetup
+arch/*/boot/bzImage
+arch/*/boot/compressed/bvmlinux*
+arch/*/boot/tools/build
+arch/*/kernel/process.c.rej
+arch/*/tools/offset.h
+arch/*/tools/offset.tmp
 drivers/char/conmakehash
 drivers/char/consolemap_deftbl.c
 drivers/net/hamradio/soundmodem/gentbl
@@ -127,7 +127,7 @@ drivers/pci/classlist.h
 drivers/pci/devlist.h
 drivers/pci/gen-devlist
 include/asm
-include/asm-x86_64/offset.h
+include/asm-*/offset.h
 include/linux/autoconf.h
 include/linux/compile.h
 include/linux/modversions.h
