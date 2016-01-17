@@ -1,3 +1,27 @@
+diff --git a/arch/i386/kernel/process.c b/arch/i386/kernel/process.c
+index e07ee7b..80fa21c 100644
+--- a/arch/i386/kernel/process.c
++++ b/arch/i386/kernel/process.c
+@@ -577,7 +577,7 @@ void copy_segments(struct task_struct *p, struct mm_struct *new_mm)
+  * Save a segment.
+  */
+ #define savesegment(seg,value) \
+-	asm volatile("movl %%" #seg ",%0":"=m" (*(int *)&(value)))
++	asm volatile("movw %%" #seg ",%0":"=m" (*(int *)&(value)))
+ 
+ int copy_thread(int nr, unsigned long clone_flags, unsigned long esp,
+ 	unsigned long unused,
+@@ -694,8 +694,8 @@ void __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	 * Save away %fs and %gs. No need to save %es and %ds, as
+ 	 * those are always kernel segments while inside the kernel.
+ 	 */
+-	asm volatile("movl %%fs,%0":"=m" (*(int *)&prev->fs));
+-	asm volatile("movl %%gs,%0":"=m" (*(int *)&prev->gs));
++	asm volatile("movw %%fs,%0":"=m" (*(int *)&prev->fs));
++	asm volatile("movw %%gs,%0":"=m" (*(int *)&prev->gs));
+ 
+ 	/*
+ 	 * Restore %fs and %gs.
 diff --git a/arch/x86_64/kernel/process.c b/arch/x86_64/kernel/process.c
 index 560e288..59fdb08 100644
 --- a/arch/x86_64/kernel/process.c
@@ -31,3 +55,16 @@ index 560e288..59fdb08 100644
  	if (unlikely(next->ds | prev->ds))
  		loadsegment(ds, next->ds);
  
+diff --git a/include/asm-i386/system.h b/include/asm-i386/system.h
+index 670c2b8c..cfd3e41 100644
+--- a/include/asm-i386/system.h
++++ b/include/asm-i386/system.h
+@@ -84,7 +84,7 @@ static inline unsigned long _get_base(char * addr)
+ #define loadsegment(seg,value)			\
+ 	asm volatile("\n"			\
+ 		"1:\t"				\
+-		"movl %0,%%" #seg "\n"		\
++		"movw %0,%%" #seg "\n"		\
+ 		"2:\n"				\
+ 		".section .fixup,\"ax\"\n"	\
+ 		"3:\t"				\
