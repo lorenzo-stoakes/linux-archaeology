@@ -54,7 +54,7 @@ cp "$configs_dir"/rcS etc/init.d
 
 echo Downloading and installing busybox...
 wget --quiet --output-document=bin/busybox \
-     https://busybox.net/downloads/binaries/latest/busybox-$busybox_arch
+     https://busybox.net/downloads/binaries/$busybox_version/busybox-$busybox_arch
 chmod +x bin/busybox
 chroot . /bin/busybox --install /bin
 
@@ -63,8 +63,12 @@ cd dev
 mknod console c 5 1
 mknod zero c 1 5
 mknod null c 1 3
-for n in $(seq 0 5); do
+for n in 0 1; do
 	mknod tty$n c 4 $n
+done
+# Point remaining ttys at /dev/null. Busybox needs at least tty[0-4], however doesn't seem to care if later tty's aren't real.
+for n in $(seq 2 5); do
+	mknod tty$n c 1 3
 done
 
 echo Compiling and installing musl...

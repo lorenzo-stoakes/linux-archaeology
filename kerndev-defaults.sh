@@ -7,10 +7,14 @@ case $arch in
 i386)
 	export musl_flags="CFLAGS=-m32"
 	export arch_patches="build32"
-	export busybox_arch=i686
+	export busybox_arch=i586
+	# Versions above this just die on init.
+	export busybox_version=1.19.0
+
 	;;
 "x86_64")
 	export busybox_arch=x86_64
+	export busybox_version="."
 	;;
 *)
 	fatal "Unknown architecture $arch."
