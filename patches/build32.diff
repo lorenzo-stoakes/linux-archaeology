@@ -1,0 +1,57 @@
+diff --git a/Makefile b/Makefile
+index 231ecd0..9193e19 100644
+--- a/Makefile
++++ b/Makefile
+@@ -89,10 +89,10 @@ export MODLIB
+ # standard CFLAGS
+ #
+
+-CPPFLAGS := -D__KERNEL__ -I$(HPATH) -g
++CPPFLAGS := -D__KERNEL__ -I$(HPATH) -g -m32
+
+ CFLAGS := $(CPPFLAGS) -Wall -Wstrict-prototypes -Wno-trigraphs -O2 \
+-	  -fno-strict-aliasing -fno-common -g
++	  -fno-strict-aliasing -fno-common -g -m32
+ ifndef CONFIG_FRAME_POINTER
+ CFLAGS += -fomit-frame-pointer
+ endif
+diff --git a/arch/i386/boot/Makefile b/arch/i386/boot/Makefile
+index e04c855..919a307 100644
+--- a/arch/i386/boot/Makefile
++++ b/arch/i386/boot/Makefile
+@@ -46,7 +46,7 @@ bootsect: bootsect.o
+ 	$(LD) -Ttext 0x0 -s --oformat binary -o $@ $<
+
+ bootsect.o: bootsect.s
+-	$(AS) -o $@ $<
++	$(AS) -32 -o $@ $<
+
+ bootsect.s: bootsect.S Makefile $(BOOT_INCL)
+ 	$(CPP) $(CPPFLAGS) -traditional $(SVGA_MODE) $(RAMDISK) $< -o $@
+@@ -55,7 +55,7 @@ bbootsect: bbootsect.o
+ 	$(LD) -Ttext 0x0 -s --oformat binary $< -o $@
+
+ bbootsect.o: bbootsect.s
+-	$(AS) -o $@ $<
++	$(AS) -32 -o $@ $<
+
+ bbootsect.s: bootsect.S Makefile $(BOOT_INCL)
+ 	$(CPP) $(CPPFLAGS) -D__BIG_KERNEL__ -traditional $(SVGA_MODE) $(RAMDISK) $< -o $@
+@@ -64,7 +64,7 @@ setup: setup.o
+ 	$(LD) -Ttext 0x0 -s --oformat binary -e begtext -o $@ $<
+
+ setup.o: setup.s
+-	$(AS) -o $@ $<
++	$(AS) -32 -o $@ $<
+
+ setup.s: setup.S video.S Makefile $(BOOT_INCL) $(TOPDIR)/include/linux/version.h $(TOPDIR)/include/linux/compile.h
+ 	$(CPP) $(CPPFLAGS) -D__ASSEMBLY__ -traditional $(SVGA_MODE) $(RAMDISK) $< -o $@
+@@ -73,7 +73,7 @@ bsetup: bsetup.o
+ 	$(LD) -Ttext 0x0 -s --oformat binary -e begtext -o $@ $<
+
+ bsetup.o: bsetup.s
+-	$(AS) -o $@ $<
++	$(AS) -32 -o $@ $<
+
+ bsetup.s: setup.S video.S Makefile $(BOOT_INCL) $(TOPDIR)/include/linux/version.h $(TOPDIR)/include/linux/compile.h
+ 	$(CPP) $(CPPFLAGS) -D__BIG_KERNEL__ -D__ASSEMBLY__ -traditional $(SVGA_MODE) $(RAMDISK) $< -o $@
