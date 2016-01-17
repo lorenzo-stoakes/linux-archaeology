@@ -40,7 +40,7 @@ trap "unmount_image $loopdev" EXIT
 mkfs.ext3 -qF -I 128 $partdev
 mount_looped_image $partdev
 
-echo Creating rootfs and installing extlinux boot code and kernel...
+echo Creating rootfs and installing boot code and kernel...
 extlinux --install $mount_dir 2>/dev/null
 cp "$configs_dir/syslinux.cfg" "$bzImage_path" "$mount_dir"
 
