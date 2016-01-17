@@ -13,7 +13,7 @@ gcc_path=/opt/gcc-3.2.3/bin/gcc-3.2.3
 
 function check_config()
 {
-	[[ ! -f .config ]] && fatal "Missing .config - run make menuconfig first." || true
+	[[ -f .config ]] || fatal "Missing .config"
 }
 
 function install_gcc3()
