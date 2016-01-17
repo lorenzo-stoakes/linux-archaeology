@@ -5,7 +5,7 @@ set -e; set -o pipefail
 script_dir=$(cd $(dirname $0); pwd -P)
 source $script_dir/kerndev-shared.sh
 
-check_commands dd losetup parted mkfs.ext3 extlinux busybox mknod chroot sudo git mktemp
+check_commands dd losetup parted mkfs.ext3 extlinux mknod chroot sudo git mktemp
 
 linux_dir=${1:-$PWD}
 check_kernel_dir "$linux_dir"
@@ -52,9 +52,11 @@ ln -sr lib usr/lib
 touch etc/fstab
 cp "$configs_dir"/rcS etc/init.d
 
-echo Installing busybox binaries...
-
-cp $(which busybox) bin
+busybox_arch=x86_64
+echo Downloading and installing busybox...
+wget --quiet --output-document=bin/busybox \
+     https://busybox.net/downloads/binaries/latest/busybox-$busybox_arch
+chmod +x bin/busybox
 chroot . /bin/busybox --install /bin
 
 echo Creating basic devices...
