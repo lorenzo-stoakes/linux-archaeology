@@ -5,11 +5,12 @@ set -e; set -o pipefail
 script_dir=$(cd $(dirname $0); pwd -P)
 source $script_dir/kerndev-shared.sh
 
-check_commands losetup qemu-system-x86_64
-
 linux_dir=${1:-$PWD}
 check_kernel_dir $linux_dir
 bzImage_path=$linux_dir/$bzImage_rel_path
+qemu=qemu-system-$arch
+
+check_commands losetup $qemu
 
 [ -f "$bzImage_path" ] || fatal "Missing image at '$bzImage_path'."
 [ -f "$image_path" ] || fatal "Missing image at '$image_path'."
@@ -24,5 +25,4 @@ cp $bzImage_path $mount_dir
 unmount_image $loopdev
 
 # And run!
-qemu-system-x86_64 -nographic -s -m $qemu_mem \
-		   -drive "file=$image_path,index=0,media=disk,format=raw"
+$qemu -nographic -s -m $qemu_mem -drive "file=$image_path,index=0,media=disk,format=raw"
