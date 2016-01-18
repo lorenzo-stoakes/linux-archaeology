@@ -39,15 +39,18 @@ function unmount_image()
 {
 	loopdev=$1
 
+	# If not mounted, nothing to do.
+	(mount | grep --quiet "$loopdev") || return
+
 	# Make sure we aren't in the mounted directory, otherwise unmount will
 	# fail.
 	[[ "$PWD" = "$(realpath $mount_dir)" ]] && pop || true
 
 	sync
-	umount $mount_dir 2>/dev/null || true
-	losetup --detach $loopdev 2>/dev/null || true
+	umount $mount_dir
 
-
+	(losetup --all | grep --quiet "$loopdev") || return
+	losetup --detach $loopdev
 }
 
 # Replaces the current script with an elevated version of itself.
