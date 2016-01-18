@@ -40,7 +40,7 @@ function unmount_image()
 	loopdev=$1
 
 	# If not mounted, nothing to do.
-	(mount | grep --quiet "$loopdev") || return
+	(mount | grep --quiet "$loopdev") || return 0
 
 	# Make sure we aren't in the mounted directory, otherwise unmount will
 	# fail.
@@ -49,7 +49,7 @@ function unmount_image()
 	sync
 	umount $mount_dir
 
-	(losetup --all | grep --quiet "$loopdev") || return
+	(losetup --all | grep --quiet "$loopdev") || return 0
 	losetup --detach $loopdev
 }
 
