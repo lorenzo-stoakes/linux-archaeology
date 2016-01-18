@@ -80,12 +80,7 @@ git clone --quiet --depth=1 git://git.musl-libc.org/musl .
 ./configure --prefix="$mount_dir/usr/local/musl" \
 	    --syslibdir="$mount_dir/lib" --target=$arch >/dev/null
 
-# TODO: De-duplicate this from kerndev-build-2.4.22.
-# Ref: http://stackoverflow.com/a/6481016
-cores=$(grep -c ^processor /proc/cpuinfo)
-# A good jobs value is cores+1.
-jobs=$((cores+1))
-
+jobs=$(get_make_jobs)
 make $musl_flags --jobs=$jobs &>/dev/null
 make install &>/dev/null
 

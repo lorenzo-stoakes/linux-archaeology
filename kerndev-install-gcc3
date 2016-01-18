@@ -61,11 +61,7 @@ function build()
 
 	compiler_version=$1
 
-	# Ref: http://stackoverflow.com/a/6481016
-	cores=$(grep -c ^processor /proc/cpuinfo)
-	# A good jobs value is cores+1.
-	jobs=$((cores+1))
-
+	jobs=$(get_make_jobs)
 	opts="--jobs=$jobs "
 	if [[ -n "$compiler_version" ]]; then
 		compiler_path="/opt/gcc-$compiler_version/bin/gcc-$compiler_version"

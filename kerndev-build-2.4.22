@@ -67,11 +67,7 @@ function revert_patches()
 
 function mak()
 {
-	# Ref: http://stackoverflow.com/a/6481016
-	cores=$(grep -c ^processor /proc/cpuinfo)
-	# A good jobs value is cores+1.
-	jobs=$((cores+1))
-
+	jobs=$(get_make_jobs)
 	make --jobs=$jobs CC=$gcc_path ARCH=$arch $@ >/dev/null
 }
 

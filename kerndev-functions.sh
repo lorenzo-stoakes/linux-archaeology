@@ -129,3 +129,11 @@ function reverse_list()
 	done
 	printf "\n"
 }
+
+function get_make_jobs()
+{
+	# Ref: http://stackoverflow.com/a/6481016
+	cores=$(grep -c ^processor /proc/cpuinfo)
+	# A good jobs value is cores+1.
+	echo $((cores+1))
+}
