@@ -12,8 +12,8 @@ check_kernel_dir "$linux_dir"
 bzImage_path="$linux_dir/$bzImage_rel_path"
 configs_dir="$script_dir/configs"
 
-[ -f "$bzImage_path" ] || fatal "Missing image at '$bzImage_path'."
-[ -f "$mbr_path" ] || fatal "Missing MBR at $mbr_path, try installing the 'syslinux' package."
+[[ -f "$bzImage_path" ]] || fatal "Missing image at '$bzImage_path'."
+[[ -f "$mbr_path" ]] || fatal "Missing MBR at $mbr_path, try installing the 'syslinux' package."
 
 elevate $@
 

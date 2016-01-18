@@ -12,8 +12,8 @@ qemu=qemu-system-$arch
 
 check_commands losetup $qemu
 
-[ -f "$bzImage_path" ] || fatal "Missing image at '$bzImage_path'."
-[ -f "$image_path" ] || fatal "Missing image at '$image_path'."
+[[ -f "$bzImage_path" ]] || fatal "Missing image at '$bzImage_path'."
+[[ -f "$image_path" ]] || fatal "Missing image at '$image_path'."
 
 elevate $@
 check_reload_loop

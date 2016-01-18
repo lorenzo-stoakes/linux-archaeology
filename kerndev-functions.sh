@@ -65,7 +65,7 @@ function elevate()
 
 function check_reload_loop()
 {
-	if [ ! -e $max_part_path ]; then
+	if [[ ! -e $max_part_path ]]; then
 		error Loopback module not loaded, loading...
 
 		load_loop
