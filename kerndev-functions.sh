@@ -137,3 +137,20 @@ function get_make_jobs()
 	# A good jobs value is cores+1.
 	echo $((cores+1))
 }
+
+function apply_patch()
+{
+	patch_path=$1
+	extra_opts=$2
+
+	patch $extra_opts --reject-file=- --quiet --force --strip=1 <$patch_path
+}
+
+# Apply patch with specified name in specified directory.
+function apply_patch_in()
+{
+	target_dir=$1
+	patch_name=$2
+
+	apply_patch $patch_name.diff "--directory=$target_dir"
+}

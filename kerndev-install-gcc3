@@ -33,14 +33,6 @@ function get_check()
 	rm $filename
 }
 
-function apply()
-{
-	target_dir=$1
-	patch_name=$2
-
-	patch --quiet --force --directory=$target_dir --strip=1 <$patch_name.diff
-}
-
 function config()
 {
 	version=$1
@@ -92,7 +84,7 @@ function go()
 
 	echo "Applying patch..."
 	# We have to fix up a breaking change: struct siginfo is now siginfo_t.
-	apply "gcc-$version" "siginfo_$version"
+	apply_patch_in "gcc-$version" "siginfo_$version"
 
 	echo "Configuring..."
 	config $version
