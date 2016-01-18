@@ -10,4 +10,4 @@ source $script_dir/kerndev-shared.sh
 elevate $@
 
 loopdev=$(say_image_loop)
-unmount_image $loopdev
+[[ -n "$loopdev" ]] && unmount_image $loopdev || true
