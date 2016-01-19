@@ -25,4 +25,8 @@ cp $bzImage_path $mount_dir
 unmount_image $loopdev
 
 # And run!
-$qemu -nographic -s -m $qemu_mem -drive "file=$image_path,index=0,media=disk,format=raw"
+# NOTE: echr option switches qemu key to C-b to prevent C-a from being broken in
+# the shell.
+$qemu -nographic -enable-kvm -cpu host -s \
+      -m $qemu_mem -smp 2 -echr 0x02 \
+      -drive "file=$image_path,index=0,media=disk,format=raw"
