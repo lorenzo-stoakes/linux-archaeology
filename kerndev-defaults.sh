@@ -5,16 +5,10 @@ set -e; set -o pipefail
 export arch=${KERNDEV_ARCH:-$(uname -m)}
 case $arch in
 i386)
-	export musl_flags="CFLAGS=-m32"
 	export arch_patches="build32"
-	export busybox_arch=i586
-	# Versions above this just die on init.
-	export busybox_version=1.19.0
 
 	;;
 "x86_64")
-	export busybox_arch=x86_64
-	export busybox_version="."
 	;;
 *)
 	fatal "Unknown architecture $arch."
@@ -31,3 +25,5 @@ export image_size_mb=2048
 export qemu_mem=4G
 export bzImage_rel_path=arch/$arch/boot/bzImage
 export default_linux_dir=$HOME/linux-historical
+export debian_release=sarge
+export debian_url=http://archive.debian.org/debian

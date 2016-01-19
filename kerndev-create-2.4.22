@@ -5,7 +5,7 @@ set -e; set -o pipefail
 script_dir=$(cd $(dirname $0); pwd -P)
 source $script_dir/kerndev-shared.sh
 
-check_commands dd losetup parted mkfs.ext3 extlinux mknod chroot sudo git mktemp
+check_commands dd losetup parted mkfs.ext3 extlinux mknod chroot sudo git mktemp debootstrap
 
 linux_dir=${1:-$default_linux_dir}
 check_kernel_dir "$linux_dir"
@@ -41,51 +41,33 @@ mkfs.ext3 -qF -I 128 $partdev
 mount_looped_image $partdev
 
 echo Creating rootfs and installing boot code and kernel...
+
 extlinux --install $mount_dir 2>/dev/null
 cp "$configs_dir/syslinux.cfg" "$bzImage_path" "$mount_dir"
 
 push "$mount_dir"
 
-mkdir -p dev proc bin usr lib etc/init.d
-ln -sr bin usr/bin
-ln -sr lib usr/lib
-touch etc/fstab
-cp "$configs_dir"/rcS etc/init.d
+echo Downloading and installing debian $debian_release rootfs...
 
-echo Downloading and installing busybox...
-wget --quiet --output-document=bin/busybox \
-     https://busybox.net/downloads/binaries/$busybox_version/busybox-$busybox_arch
-chmod +x bin/busybox
-chroot . /bin/busybox --install /bin
+# There is no specific x86_64 distribution, at least at the debian archive mirror.
+debootstrap --arch=i386 $debian_release $mount_dir $debian_url >/dev/null
 
-echo Creating basic devices...
+echo Creating basic devices and setting up fstab and inittab...
+
 cd dev
-mknod console c 5 1
-mknod zero c 1 5
-mknod null c 1 3
-for n in 0 1; do
-	mknod tty$n c 4 $n
-done
-# Point remaining ttys at /dev/null. Busybox needs at least tty[0-4], however doesn't seem to care if later tty's aren't real.
-for n in $(seq 2 5); do
-	mknod tty$n c 1 3
-done
+# Missing out this line results in no terminal :)
+mknod ttyS0 c 4 64
+mknod hda   b 3 0
+mknod hda1  b 3 1
+cd ..
 
-echo Compiling and installing musl...
+echo "T0:23:respawn:/sbin/getty -L ttyS0 115200 vt100" >>etc/inittab
 
-tmpdir=$(mktemp --directory)
-push $tmpdir
-
-git clone --quiet --depth=1 git://git.musl-libc.org/musl .
-./configure --prefix="$mount_dir/usr/local/musl" \
-	    --syslibdir="$mount_dir/lib" --target=$arch >/dev/null
-
-jobs=$(get_make_jobs)
-make $musl_flags --jobs=$jobs &>/dev/null
-make install &>/dev/null
-
-# Fix up dynamic linker symlink.
-ln -sf /usr/local/musl/lib/libc.so $mount_dir/lib/ld-musl-$arch.so.1
+cat <<EOF >etc/fstab
+/dev/hda1      /            ext3     defaults            1     1
+proc           /proc        proc     nosuid,noexec,nodev 0     0
+devpts         /dev/pts     devpts   gid=5,mode=620      0     0
+EOF
 
 pop
 rm -rf "$tmpdir"
