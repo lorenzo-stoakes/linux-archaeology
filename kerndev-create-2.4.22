@@ -69,6 +69,14 @@ proc           /proc        proc     nosuid,noexec,nodev 0     0
 devpts         /dev/pts     devpts   gid=5,mode=620      0     0
 EOF
 
+# Requires CONFIG_FILTER and CONFIG_E1000. TODO: Add code in build to set
+# critical config options.
+cat <<EOF >etc/network/interfaces
+auto eth0
+allow-hotplug eth0
+iface eth0 inet dhcp
+EOF
+
 pop
 rm -rf "$tmpdir"
 
