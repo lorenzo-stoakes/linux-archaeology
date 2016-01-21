@@ -1,8 +1,9 @@
 #!/bin/bash
 set -e; set -o pipefail
 
-# Default to host arch.
-export arch=${KERNDEV_ARCH:-$(uname -m)}
+# Default to 386, a better supported platform for 2.4.22 :)
+export arch=${KERNDEV_ARCH:-i386}
+
 case $arch in
 i386)
 	export arch_patches="build32"
