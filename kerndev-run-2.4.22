@@ -24,9 +24,22 @@ trap "unmount_image $loopdev" EXIT
 cp $bzImage_path $mount_dir
 unmount_image $loopdev
 
+# KVM works for i386, not x86_64 for some reason :(
+case $arch in
+	i386)
+		archopts="-enable-kvm -cpu host"
+
+		;;
+	x86_64)
+		;;
+	*)
+		fatal "build: Unrecognised arch '$arch'."
+		;;
+esac
+
 # And run!
 # NOTE: echr option switches qemu key to C-b to prevent C-a from being broken in
 # the shell.
-$qemu -nographic -enable-kvm -cpu host -s \
+$qemu -nographic $archopts -s \
       -m $qemu_mem -smp 2 -echr 0x02 \
       -drive "file=$image_path,index=0,media=disk,format=raw"
