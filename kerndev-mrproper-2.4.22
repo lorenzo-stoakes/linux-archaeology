@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e; set -o pipefail
+
+# See http://stackoverflow.com/a/4774063.
+script_dir=$(cd $(dirname $0); pwd -P)
+source $script_dir/kerndev-shared.sh
+
+# Completely nuke the linux directory back to original state.
+
+target_dir=${1:-$default_linux_dir}
+[[ ! -d "$target_dir" ]] && fatal "mrproper: Can't find linux dir $target_dir."
+
+push $target_dir
+
+# Has a habit of deleting checked in files, we fix this with a checkout.
+make distclean >/dev/null
+git checkout --quiet .
+# Cleans out created directories too.
+git clean --quiet --force -d
+
+pop
