@@ -15,6 +15,8 @@ push $target_dir
 # Has a habit of deleting checked in files, we fix this with a checkout.
 make distclean >/dev/null
 git checkout --quiet .
+# .gitignore will prevent clean from doing its job.
+rm .gitignore
 # Cleans out created directories too.
 git clean --quiet --force -d
 
