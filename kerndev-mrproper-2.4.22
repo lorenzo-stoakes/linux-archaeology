@@ -16,7 +16,7 @@ push $target_dir
 make distclean >/dev/null
 git checkout --quiet .
 # .gitignore will prevent clean from doing its job.
-rm .gitignore
+rm --force .gitignore
 # Cleans out created directories too.
 git clean --quiet --force -d
 
