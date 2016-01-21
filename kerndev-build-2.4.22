@@ -12,9 +12,9 @@ patches+=" $arch_patches"
 # This path will be available once install_gcc3.sh has completed.
 gcc_path=/opt/gcc-3.2.3/bin/gcc-3.2.3
 
-function check_config()
+function set_config()
 {
-	[[ -f .config ]] || fatal "Missing .config"
+	$script_dir/kerndev-config-2.4.22 $target_dir
 }
 
 function install_gcc3()
@@ -79,17 +79,13 @@ push $target_dir
 # commits synced with the kernel, not contaminate the history.
 cp $script_dir/kernel_gitignore .gitignore
 
-# Make the configure script work on modern systems.
-git checkout scripts/Configure
-apply_patch $script_dir/patches/fix_config.diff
-
-check_config
 check_gcc_or_install 3.2.3
 
 apply_patches
 # Revert patches immediately afterwards to get slightly saner diffs.
 trap revert_patches EXIT
 
+set_config
 build_kernel
 
 pop

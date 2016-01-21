@@ -1,0 +1,126 @@
+#!/bin/bash
+set -e; set -o pipefail
+
+# See http://stackoverflow.com/a/4774063.
+script_dir=$(cd $(dirname $0); pwd -P)
+source $script_dir/kerndev-shared.sh
+
+# Sets minimum config options required to run in qemu.
+
+function get_opt()
+{
+	echo CONFIG_$(to_upper $1)
+}
+
+function strip_config()
+{
+	opt=$(get_opt $1)
+
+	grep --invert-match "^$opt=" .config > .config.tmp
+	mv .config.tmp .config
+}
+
+function disable_config()
+{
+	opt=$(get_opt $1)
+
+	# Not exactly optimal, but this is not exactly at 'web scale' ;)
+	strip_config $1
+	# make oldconfig will clean up.
+	echo "$opt=n" >>.config
+}
+
+function enable_config()
+{
+	opt=$(get_opt $1)
+
+	strip_config $1
+	echo "$opt=y" >>.config
+}
+
+function set_config()
+{
+	opt=$(get_opt $1)
+	val=$2
+
+	strip_config $1
+	echo "$opt=$val" >>.config
+}
+
+function disable_configs()
+{
+	for opt in $@; do
+		disable_config $opt
+	done
+}
+
+function enable_configs()
+{
+	for opt in $@; do
+		enable_config $opt
+	done
+}
+
+target_dir=${1:-$default_linux_dir}
+check_kernel_dir $target_dir
+
+push $target_dir
+
+# Make the configure script work on modern systems.
+git checkout scripts/Configure
+apply_patch $script_dir/patches/fix_config.diff
+
+# The actual defconfig triggers loads of oldconfig questions due to missing
+# entries. Skip this noise by keeping a cleaned defconfig in the scripts dir.
+# TODO: When moving to supporting more than 2.4.22 this could become a problem :]
+[[ ! -f ".config" ]] && cp $script_dir/configs/$arch.defconfig .config
+
+		# Probably the most important option - qemu emulates a serial
+		# connection so we have to be able to run a console over
+		# it. Doesn't work without this :)
+		enable_configs serial_console
+
+		# qemu doesn't like it if SMP is not enabled.
+		enable_configs smp
+
+		# Our disk is ext3 so would help to have it. Enable generic PCI
+		# IDE while we're at it.
+		enable_configs ext3_fs blk_dev_generic
+
+		# Useful to be able to use a RAM disk and loopback devices.
+		enable_configs blk_dev_ram blk_dev_loop
+		set_config blk_dev_ram_size 4096
+
+		# Networking :)
+		enable_configs  e1000 filter
+		disable_configs e1000_napi
+
+		# We are l337 kernel hax0rz
+		enable_configs  debug_kernel frame_pointer magic_sysrq
+		disable_configs debug_stackoverflow debug_highmem debug_slab \
+				debug_iovirt debug_spinlock
+
+		# Remove some things we don't care about.
+		disable_configs kmod pcmcia agp drm sound usb
+
+# Architecture-specific settings.
+
+case $arch in
+	i386)
+		# Allow access to more memory and x86 numa.
+		enable_configs  highmem4g highio x86_numa
+		disable_configs nohighmem x86_numaq x86_summit
+
+		;;
+	x86_64)
+		enable_configs k8_numa
+
+		;;
+	*)
+		fatal "config: Unrecognised arch '$arch'."
+		;;
+esac
+
+make oldconfig ARCH=$arch >/dev/null
+
+pop
