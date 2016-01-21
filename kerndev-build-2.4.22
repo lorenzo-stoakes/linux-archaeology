@@ -60,7 +60,11 @@ function revert_patches()
 function mak()
 {
 	jobs=$(get_make_jobs)
-	make --jobs=$jobs CC=$gcc_path ARCH=$arch GENKSYMS=true $@  >/dev/null
+	(make --jobs=$jobs CC=$gcc_path ARCH=$arch GENKSYMS=true $@ >/dev/null) 2>&1 | \
+		grep --invert-match ' is empty$' | \
+		grep --invert-match '^md5sum:' | \
+		grep --invert-match 'jobserver unavailable' | \
+		grep --invert-match '^{standard input}'
 }
 
 function build_kernel()
