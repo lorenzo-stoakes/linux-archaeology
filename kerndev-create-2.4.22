@@ -55,6 +55,8 @@ echo Downloading and installing debian $debian_release rootfs...
 
 # There is no specific x86_64 distribution, at least at the debian archive mirror.
 debootstrap --arch=i386 $debian_release $mount_dir $debian_url >/dev/null
+# Set a non-host hostname.
+echo morgoth > $mount_dir/etc/hostname
 
 echo Creating basic devices and setting up fstab and inittab...
 
