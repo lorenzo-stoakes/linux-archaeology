@@ -10,9 +10,11 @@ check_commands dd losetup parted mkfs.ext3 extlinux mknod chroot sudo git mktemp
 linux_dir=${1:-$default_linux_dir}
 check_kernel_dir "$linux_dir"
 bzImage_path="$linux_dir/$bzImage_rel_path"
+sysmap_path="$linux_dir/System.map"
 configs_dir="$script_dir/configs"
 
 [[ -f "$bzImage_path" ]] || fatal "Missing image at '$bzImage_path'."
+[[ -f "$sysmap_path" ]] || fatal "Missing System.map at '$sysmap_path'."
 [[ -f "$mbr_path" ]] || fatal "Missing MBR at $mbr_path, try installing the 'syslinux' package."
 
 elevate $@
@@ -42,8 +44,10 @@ mount_looped_image $partdev
 
 echo Creating rootfs and installing boot code and kernel...
 
+mkdir $mount_dir/boot
 extlinux --install $mount_dir 2>/dev/null
-cp "$configs_dir/syslinux.cfg" "$bzImage_path" "$mount_dir"
+cp "$configs_dir/syslinux.cfg" "$mount_dir"
+cp "$bzImage_path" "$sysmap_path" "$mount_dir/boot"
 
 push "$mount_dir"
 

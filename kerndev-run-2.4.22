@@ -7,12 +7,15 @@ source $script_dir/kerndev-shared.sh
 
 linux_dir=${1:-$default_linux_dir}
 check_kernel_dir $linux_dir
+# TODO: De-duplicate bzImage/System.map installation from kerndev-create.
 bzImage_path=$linux_dir/$bzImage_rel_path
+sysmap_path="$linux_dir/System.map"
 qemu=qemu-system-$arch
 
 check_commands losetup $qemu
 
 [[ -f "$bzImage_path" ]] || fatal "Missing image at '$bzImage_path'."
+[[ -f "$sysmap_path" ]] || fatal "Missing System.map at '$sysmap_path'."
 [[ -f "$image_path" ]] || fatal "Missing image at '$image_path'."
 
 elevate $@
@@ -21,7 +24,7 @@ check_reload_loop
 # Copy kernel image over.
 loopdev=$(mount_image)
 trap "unmount_image $loopdev" EXIT
-cp $bzImage_path $mount_dir
+cp "$bzImage_path" "$sysmap_path" "$mount_dir/boot"
 unmount_image $loopdev
 
 # KVM works for i386, not x86_64 for some reason :(
