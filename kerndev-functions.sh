@@ -154,3 +154,8 @@ function apply_patch_in()
 
 	apply_patch $patch_name.diff "--directory=$target_dir"
 }
+
+function to_upper()
+{
+	echo $@ | tr '[a-z]' '[A-Z]'
+}
