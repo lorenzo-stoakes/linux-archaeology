@@ -60,7 +60,7 @@ function revert_patches()
 function mak()
 {
 	jobs=$(get_make_jobs)
-	make --jobs=$jobs CC=$gcc_path ARCH=$arch $@ >/dev/null
+	make --jobs=$jobs CC=$gcc_path ARCH=$arch GENKSYMS=true $@  >/dev/null
 }
 
 function build_kernel()
