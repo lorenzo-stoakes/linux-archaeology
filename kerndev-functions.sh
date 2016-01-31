@@ -72,7 +72,15 @@ function check_reload_loop()
 	elif (($(< $max_part_path) < 2)); then
 		error Loopback module has too few partitions supported, attempting to reload...
 
-		modprobe --remove loop
+		modprobe --remove loop || (
+			echo -e "\nCouldn't remove loop module. Current loops:\n"
+			losetup --all
+			echo -e "\nTry unloading whatever is preventing loop being removed "
+			echo "(docker is a common culprit), running this command again, "
+			echo "and afterwards, reload whatever was blocking the change."
+
+			exit 1
+		)
 		load_loop
 	fi
 }
