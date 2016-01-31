@@ -69,6 +69,10 @@ cd ..
 
 echo "T0:23:respawn:/sbin/getty -L ttyS0 115200 vt100" >>etc/inittab
 
+# Remove broken tty entries.
+grep --invert-match '^[[:digit:]]:' etc/inittab > _inittab
+mv _inittab etc/inittab
+
 cat <<EOF >etc/fstab
 /dev/hda1      /            ext3     defaults            1     1
 proc           /proc        proc     nosuid,noexec,nodev 0     0
